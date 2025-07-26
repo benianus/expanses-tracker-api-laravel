@@ -70,7 +70,9 @@ class ExpanseController extends Controller
     public function destroy(Expanse $expanse)
     {
         //
-        DB::delete('delete expanses where id = ?', $expanse->id);
-        return $expanse;
+        $isDeleted = $expanse->delete();
+        return $isDeleted ?
+            ["message" => "Expanse successfully Deleted"] :
+            ["message" => "Failed to delete, try again"];
     }
 }

@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Mohamed BENIANE',
             'email' => 'beniane39@gmail.com',
+            'password' => '1234'
         ]);
 
         Expanse::factory(10)->create();
