@@ -105,7 +105,8 @@ class ExpanseController extends Controller
     {
         $expanses = Expanse::whereBetween('created_at', [
             Carbon::now()
-                ->subDays($request->query('days')),
+                ->subDays($request->query('days'))
+                ->subHours($request->query('hours')),
             Carbon::now()
         ])
             ->get();
