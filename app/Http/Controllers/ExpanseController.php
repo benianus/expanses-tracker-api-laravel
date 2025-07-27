@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Expanse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ExpanseController extends Controller
@@ -29,7 +31,29 @@ class ExpanseController extends Controller
             'user_id' => $request->input('user_id')
         ]);
 
-        return $expanse->jsonSerialize();
+        $categories = $request->input('categories');
+
+        // fetch categories
+        foreach ($categories as $category) {
+            # code...
+            $cats[] = Category::where([
+                'name' => $category
+            ])->firstOr();
+        }
+
+        // get categories ids to attach it to expanses
+        foreach ($cats as $cat) {
+            # code...
+            $ids[] = $cat->id;
+        }
+
+        // attach the expanse to there category
+        $expanse->categories()->attach($ids);
+
+        return [
+            "data" => $expanse->jsonSerialize(),
+            "categories" => $categories
+        ];
     }
 
     /**
@@ -74,5 +98,12 @@ class ExpanseController extends Controller
         return $isDeleted ?
             ["message" => "Expanse successfully Deleted"] :
             ["message" => "Failed to delete, try again"];
+    }
+    public function filter(Request $request)
+    {
+        $expanses = Expanse::whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()]);
+        return [
+            "data" => $expanses
+        ];
     }
 }
