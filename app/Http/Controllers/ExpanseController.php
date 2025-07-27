@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Expanse;
 use Carbon\Carbon;
+use Carbon\Doctrine\CarbonDoctrineType;
+use Carbon\Traits\Timestamp;
 use Illuminate\Http\Request;
 
 class ExpanseController extends Controller
@@ -101,7 +103,13 @@ class ExpanseController extends Controller
     }
     public function filter(Request $request)
     {
-        $expanses = Expanse::whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()]);
+        $expanses = Expanse::whereBetween('created_at', [
+            Carbon::now()
+                ->subDays($request->query('days')),
+            Carbon::now()
+        ])
+            ->get();
+
         return [
             "data" => $expanses
         ];
